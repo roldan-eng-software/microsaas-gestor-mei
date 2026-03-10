@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Connection URL is configured in prisma.config.ts
+}
+
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  password       String?
+  name           String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  // Relacionamentos
+  clients        Client[]
+  services       Service[]
+  financialEntries FinancialEntry[]
+  
+  @@map("users")
+}
+
+model Client {
+  id          String    @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relacionamento com User (MEI)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  
+  // Relacionamento com lançamentos financeiros
+  financialEntries FinancialEntry[]
+  
+  @@map("clients")
+}
+
+model Service {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relacionamento com User (MEI)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  
+  // Relacionamento com lançamentos financeiros
+  financialEntries FinancialEntry[]
+  
+  @@map("services")
+}
+
+model FinancialEntry {
+  id          String    @id @default(uuid())
+  type        String    // "income" ou "expense"
+  amount      Decimal
+  description String
+  date        DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relacionamento com User (MEI)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  
+  // Relacionamento opcional com Cliente
+  clientId    String?
+  client      Client?   @relation(fields: [clientId], references: [id])
+  
+  // Relacionamento opcional com Serviço
+  serviceId   String?
+  service     Service?  @relation(fields: [serviceId], references: [id])
+  
+  @@map("financial_entries")
+}

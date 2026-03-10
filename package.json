@@ -1,0 +1,38 @@
+{
+  "name": "microsaas-gestor-mei-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "vercel-build": "prisma generate && next build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "25.4.0",
+    "@types/pg": "^8.18.0",
+    "@types/react": "19.2.14",
+    "typescript": "5.9.3",
+    "vercel": "^50.29.0"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.11.1",
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "@tailwindcss/postcss": "^4.2.1",
+    "autoprefixer": "^10.4.27",
+    "next": "^16.1.6",
+    "next-auth": "^4.24.13",
+    "pg": "^8.20.0",
+    "postcss": "^8.5.8",
+    "prisma": "^7.4.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^4.2.1"
+  }
+}
