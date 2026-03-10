@@ -7,7 +7,6 @@ import { isSegmentKey } from '@/lib/segments'
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions)
-
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -38,4 +37,3 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ ok: true, segment, enabledModules })
 }
-

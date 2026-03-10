@@ -5,7 +5,6 @@ import prisma from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -14,79 +13,53 @@ export async function GET(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     })
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    // Calcular receitas e despesas do mês atual
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
 
-    const revenueEntries = await prisma.financialEntry.findMany({
-      where: {
-        userId: user.id,
-        type: 'income',
-        date: {
-          gte: startOfMonth,
-          lte: endOfMonth,
+    const [revenue, expenses, entriesCount, plansCount] = await Promise.all([
+      prisma.financialEntry.aggregate({
+        where: {
+          userId: user.id,
+          type: 'income',
+          date: { gte: startOfMonth, lte: endOfMonth },
         },
-      },
-    })
-
-    const expenseEntries = await prisma.financialEntry.findMany({
-      where: {
-        userId: user.id,
-        type: 'expense',
-        date: {
-          gte: startOfMonth,
-          lte: endOfMonth,
+        _sum: { amount: true },
+      }),
+      prisma.financialEntry.aggregate({
+        where: {
+          userId: user.id,
+          type: 'expense',
+          date: { gte: startOfMonth, lte: endOfMonth },
         },
-      },
-    })
+        _sum: { amount: true },
+      }),
+      prisma.financialEntry.count({
+        where: { userId: user.id, date: { gte: startOfMonth, lte: endOfMonth } },
+      }),
+      prisma.recurringPlan.count({ where: { userId: user.id, status: 'active' } }),
+    ])
 
-    const totalRevenue = revenueEntries.reduce((sum, entry) => sum + entry.amount.toNumber(), 0)
-    const totalExpenses = expenseEntries.reduce((sum, entry) => sum + entry.amount.toNumber(), 0)
-
-    // Lançamentos recentes
     const recentEntries = await prisma.financialEntry.findMany({
       where: { userId: user.id },
-      include: {
-        client: { select: { name: true } },
-      },
-      orderBy: { date: 'desc' },
-      take: 10,
-    })
-
-    // Contagens
-    const clientsCount = await prisma.client.count({
-      where: { userId: user.id },
-    })
-
-    const servicesCount = await prisma.service.count({
-      where: { userId: user.id },
-    })
-
-    const recurringPlansCount = await prisma.recurringPlan.count({
-      where: { userId: user.id, status: 'active' },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: { client: true },
     })
 
     return NextResponse.json({
-      totalRevenue,
-      totalExpenses,
-      recentEntries: recentEntries.map(entry => ({
-        id: entry.id,
-        description: entry.description,
-        amount: entry.amount.toNumber(),
-        date: entry.date.toISOString(),
-        clientName: entry.client?.name,
-      })),
-      clientsCount,
-      servicesCount,
-      recurringPlansCount,
+      revenue: revenue._sum.amount || 0,
+      expenses: expenses._sum.amount || 0,
+      entriesCount,
+      plansCount,
+      recentEntries,
     })
   } catch (error) {
-    return NextResponse.json({ error: 'Erro ao buscar dados' }, { status: 500 })
+    return NextResponse.json({ error: 'Erro ao carregar dashboard' }, { status: 500 })
   }
 }

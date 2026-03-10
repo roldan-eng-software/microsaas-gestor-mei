@@ -5,7 +5,6 @@ import prisma from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -14,202 +13,102 @@ export async function GET(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     })
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    // Calcular período atual (mês)
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    
-    // Total recebido no mês (receitas já pagas)
-    const receivedEntries = await prisma.financialEntry.findMany({
-      where: {
-        userId: user.id,
-        type: 'income',
-        date: {
-          gte: startOfMonth,
-          lte: endOfMonth,
-        },
-      },
-    })
-    
-    const totalReceived = receivedEntries.reduce(
-      (sum, entry) => sum + entry.amount.toNumber(), 
-      0
-    )
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+    const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0, 23, 59, 59)
 
-    // Total a receber (receitas futuras ou não pagas)
-    const futureEntries = await prisma.financialEntry.findMany({
-      where: {
-        userId: user.id,
-        type: 'income',
-        date: {
-          gt: endOfMonth,
+    const [received, toReceive, expenses, topClients, topServices, goals] = await Promise.all([
+      prisma.financialEntry.aggregate({
+        where: {
+          userId: user.id,
+          type: 'income',
+          date: { gte: startOfMonth, lte: endOfMonth },
         },
-      },
-    })
-    
-    const totalToReceive = futureEntries.reduce(
-      (sum, entry) => sum + entry.amount.toNumber(), 
-      0
-    )
-
-    // Total de despesas no mês
-    const expenseEntries = await prisma.financialEntry.findMany({
-      where: {
-        userId: user.id,
-        type: 'expense',
-        date: {
-          gte: startOfMonth,
-          lte: endOfMonth,
+        _sum: { amount: true },
+      }),
+      prisma.financialEntry.aggregate({
+        where: {
+          userId: user.id,
+          type: 'income',
+          date: { gte: startOfNextMonth, lte: endOfNextMonth },
         },
-      },
-    })
-    
-    const totalExpenses = expenseEntries.reduce(
-      (sum, entry) => sum + entry.amount.toNumber(), 
-      0
-    )
-
-    // Lucro líquido
-    const netIncome = totalReceived - totalExpenses
-
-    // Top 5 clientes por valor recebido
-    const clientStats = await prisma.financialEntry.groupBy({
-      by: ['clientId'],
-      where: {
-        userId: user.id,
-        type: 'income',
-        date: {
-          gte: startOfMonth,
-          lte: endOfMonth,
+        _sum: { amount: true },
+      }),
+      prisma.financialEntry.aggregate({
+        where: {
+          userId: user.id,
+          type: 'expense',
+          date: { gte: startOfMonth, lte: endOfMonth },
         },
-        clientId: { not: null },
-      },
-      _sum: {
-        amount: true,
-      },
-      orderBy: {
-        _sum: {
-          amount: 'desc',
-        },
-      },
-      take: 5,
-    })
+        _sum: { amount: true },
+      }),
+      prisma.financialEntry.groupBy({
+        by: ['clientId'],
+        where: { userId: user.id, type: 'income', date: { gte: startOfMonth, lte: endOfMonth } },
+        _sum: { amount: true },
+        orderBy: { _sum: { amount: 'desc' } },
+        take: 5,
+      }),
+      prisma.financialEntry.groupBy({
+        by: ['serviceId'],
+        where: { userId: user.id, type: 'income', date: { gte: startOfMonth, lte: endOfMonth } },
+        _sum: { amount: true },
+        _count: { serviceId: true },
+        orderBy: { _sum: { amount: 'desc' } },
+        take: 5,
+      }),
+      prisma.goal.findMany({
+        where: { userId: user.id, status: 'active', period: 'monthly' },
+        orderBy: { createdAt: 'desc' },
+        take: 3,
+      }),
+    ])
 
-    const topClients = await Promise.all(
-      clientStats.map(async (stat) => {
-        if (!stat.clientId) return null
-        const client = await prisma.client.findUnique({
-          where: { id: stat.clientId },
-        })
+    const totalReceived = received._sum.amount || 0
+    const monthlyGoal = goals[0]?.targetAmount || 0
+    const monthlyProgress = monthlyGoal > 0 ? Math.min(100, Math.round((totalReceived / monthlyGoal) * 100)) : 0
+
+    const topClientsWithDetails = await Promise.all(
+      topClients.map(async (client) => {
+        const clientData = await prisma.client.findUnique({ where: { id: client.clientId! } })
         return {
-          name: client?.name || 'Cliente',
-          amount: stat._sum.amount?.toNumber() || 0,
-          percentage: 0,
+          name: clientData?.name || 'Desconhecido',
+          amount: client._sum.amount || 0,
+          percentage: totalReceived > 0 ? Math.round(((client._sum.amount || 0) / totalReceived) * 100) : 0,
         }
       })
     )
 
-    // Calcular porcentagens
-    const totalClientAmount = topClients.reduce(
-      (sum, client) => sum + (client?.amount || 0), 
-      0
-    )
-    const topClientsWithPercentage = topClients
-      .filter((c): c is NonNullable<typeof c> => c !== null)
-      .map(client => ({
-        ...client,
-        percentage: totalClientAmount > 0 
-          ? (client.amount / totalClientAmount) * 100 
-          : 0,
-      }))
-
-    // Top serviços mais vendidos
-    const serviceStats = await prisma.financialEntry.groupBy({
-      by: ['serviceId'],
-      where: {
-        userId: user.id,
-        type: 'income',
-        date: {
-          gte: startOfMonth,
-          lte: endOfMonth,
-        },
-        serviceId: { not: null },
-      },
-      _count: {
-        id: true,
-      },
-      _sum: {
-        amount: true,
-      },
-      orderBy: {
-        _count: {
-          id: 'desc',
-        },
-      },
-      take: 6,
-    })
-
-    const topServices = await Promise.all(
-      serviceStats.map(async (stat) => {
-        if (!stat.serviceId) return null
-        const service = await prisma.service.findUnique({
-          where: { id: stat.serviceId },
-        })
+    const topServicesWithDetails = await Promise.all(
+      topServices.map(async (service) => {
+        const serviceData = await prisma.service.findUnique({ where: { id: service.serviceId! } })
         return {
-          name: service?.name || 'Serviço',
-          count: stat._count.id,
-          total: stat._sum.amount?.toNumber() || 0,
+          name: serviceData?.name || 'Serviço não especificado',
+          count: service._count.serviceId,
+          total: service._sum.amount || 0,
         }
       })
     )
-
-    // Meta mensal (buscar a meta ativa do mês atual)
-    const monthlyGoal = await prisma.goal.findFirst({
-      where: {
-        userId: user.id,
-        period: 'monthly',
-        month: now.getMonth() + 1,
-        year: now.getFullYear(),
-        status: 'active',
-      },
-    })
-
-    const monthlyGoalAmount = monthlyGoal?.targetAmount.toNumber() || 10000
-    const monthlyProgress = (totalReceived / monthlyGoalAmount) * 100
-
-    // Todas as metas ativas
-    const goals = await prisma.goal.findMany({
-      where: {
-        userId: user.id,
-        status: 'active',
-      },
-      orderBy: { createdAt: 'desc' },
-    })
 
     return NextResponse.json({
       totalReceived,
-      totalToReceive,
-      totalExpenses,
-      netIncome,
-      topClients: topClientsWithPercentage,
-      topServices: topServices.filter((s): s is NonNullable<typeof s> => s !== null),
-      monthlyGoal: monthlyGoalAmount,
+      totalToReceive: toReceive._sum.amount || 0,
+      totalExpenses: expenses._sum.amount || 0,
+      netIncome: totalReceived - (expenses._sum.amount || 0),
+      topClients: topClientsWithDetails,
+      topServices: topServicesWithDetails,
+      monthlyGoal,
       monthlyProgress,
-      goals: goals.map(goal => ({
-        id: goal.id,
-        name: goal.name,
-        targetAmount: goal.targetAmount.toNumber(),
-        currentAmount: goal.currentAmount.toNumber(),
-        status: goal.status,
-      })),
+      goals,
     })
   } catch (error) {
-    console.error(error)
-    return NextResponse.json({ error: 'Erro ao buscar dados financeiros' }, { status: 500 })
+    return NextResponse.json({ error: 'Erro ao carregar dados financeiros' }, { status: 500 })
   }
 }

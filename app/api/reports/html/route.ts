@@ -3,9 +3,17 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/options'
 import prisma from '@/lib/prisma'
 
+// Helper to escape HTML special characters
+const escapeHtml = (str: string): string =>
+  str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -17,12 +25,11 @@ export async function GET(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     })
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    // Calcular datas baseadas no período
     const now = new Date()
     let startDate = new Date()
     let endDate = new Date()
@@ -43,44 +50,29 @@ export async function GET(request: NextRequest) {
         break
       case 'month':
         startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
         break
       case 'year':
         startDate = new Date(now.getFullYear(), 0, 1)
-        endDate = new Date(now.getFullYear(), 11, 31)
+        endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59)
         break
     }
 
-    // Buscar lançamentos
     const entries = await prisma.financialEntry.findMany({
       where: {
         userId: user.id,
-        date: {
-          gte: startDate,
-          lte: endDate,
-        },
+        date: { gte: startDate, lte: endDate },
       },
-      include: {
-        client: { select: { name: true } },
-      },
+      include: { client: { select: { name: true } } },
       orderBy: { date: 'desc' },
     })
 
-    // Calcular totais
     const incomeEntries = entries.filter(e => e.type === 'income')
     const expenseEntries = entries.filter(e => e.type === 'expense')
-
-    const totalReceived = incomeEntries.reduce(
-      (sum, entry) => sum + entry.amount.toNumber(), 
-      0
-    )
-    const totalExpenses = expenseEntries.reduce(
-      (sum, entry) => sum + entry.amount.toNumber(), 
-      0
-    )
+    const totalReceived = incomeEntries.reduce((sum, entry) => sum + entry.amount.toNumber(), 0)
+    const totalExpenses = expenseEntries.reduce((sum, entry) => sum + entry.amount.toNumber(), 0)
     const netIncome = totalReceived - totalExpenses
 
-    // Gerar HTML
     const htmlContent = `
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -107,7 +99,6 @@ export async function GET(request: NextRequest) {
 <body>
     <h1>Relatório Financeiro - ${period.charAt(0).toUpperCase() + period.slice(1)}</h1>
     <p><strong>Período:</strong> ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}</p>
-    
     <div class="summary">
         <h2>Resumo</h2>
         <div class="summary-item">
@@ -143,8 +134,8 @@ export async function GET(request: NextRequest) {
             ${entries.map(entry => `
                 <tr>
                     <td>${entry.date.toLocaleDateString()}</td>
-                    <td>${entry.description}</td>
-                    <td>${entry.client?.name || '-'}</td>
+                    <td>${escapeHtml(entry.description)}</td>
+                    <td>${escapeHtml(entry.client?.name || '-')}</td>
                     <td class="${entry.type === 'income' ? 'income' : 'expense'}">
                         ${entry.type === 'income' ? 'Receita' : 'Despesa'}
                     </td>
