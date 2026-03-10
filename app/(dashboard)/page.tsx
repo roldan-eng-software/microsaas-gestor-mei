@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import { useMe } from '@/components/useMe'
+import { segments } from '@/lib/segments'
 
 interface DashboardData {
   totalRevenue: number
@@ -24,6 +26,7 @@ interface DashboardData {
 
 export default function DashboardPage() {
   const { data: session } = useSession()
+  const { me } = useMe()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -59,6 +62,26 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
+
+      {me?.segmentationEnabled && (
+        <div className="bg-white p-4 rounded-lg shadow flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-500">Segmento</p>
+            <p className="text-gray-900 font-semibold">
+              {segments.find((s) => s.key === me.user.segment)?.label || me.user.segment}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Modulos habilitados: {me.enabledModules.length ? me.enabledModules.join(', ') : 'nenhum'}
+            </p>
+          </div>
+          <Link
+            href="/(dashboard)/segmento"
+            className="bg-gray-100 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-200"
+          >
+            Ajustar segmento
+          </Link>
+        </div>
+      )}
 
       {/* Cards de resumo financeiro */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -143,6 +166,27 @@ export default function DashboardPage() {
           Recibos
         </Link>
       </div>
+
+      {me?.segmentationEnabled && (me.enabledModules.includes('agenda') || me.enabledModules.includes('contratos')) && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {me.enabledModules.includes('agenda') && (
+            <Link
+              href="/(dashboard)/agenda"
+              className="bg-emerald-600 text-white p-4 rounded-lg text-center hover:bg-emerald-700"
+            >
+              Abrir Agenda
+            </Link>
+          )}
+          {me.enabledModules.includes('contratos') && (
+            <Link
+              href="/(dashboard)/contratos"
+              className="bg-slate-700 text-white p-4 rounded-lg text-center hover:bg-slate-800"
+            >
+              Abrir Contratos
+            </Link>
+          )}
+        </div>
+      )}
 
       {/* Estatísticas rápidas */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

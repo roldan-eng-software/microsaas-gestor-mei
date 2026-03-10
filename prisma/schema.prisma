@@ -12,6 +12,7 @@ model User {
   email     String   @unique
   password  String?
   name      String?
+  segment   String   @default("geral")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -22,6 +23,7 @@ model User {
   recurringPlans   RecurringPlan[]
   reminders        Reminder[]
   goals            Goal[]
+  userModules      UserModule[]
 
   @@map("users")
 }
@@ -182,4 +184,32 @@ model Goal {
   user        User      @relation(fields: [userId], references: [id])
   
   @@map("goals")
+}
+
+model Module {
+  key         String   @id
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userModules UserModule[]
+
+  @@map("modules")
+}
+
+model UserModule {
+  id        String   @id @default(uuid())
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
+  moduleKey String
+  module    Module @relation(fields: [moduleKey], references: [key])
+
+  @@unique([userId, moduleKey])
+  @@map("user_modules")
 }

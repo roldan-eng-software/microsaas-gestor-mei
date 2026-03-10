@@ -3,6 +3,7 @@
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useMe } from '@/components/useMe'
 
 export default function DashboardLayout({
   children,
@@ -11,6 +12,7 @@ export default function DashboardLayout({
 }) {
   const { data: session, status } = useSession()
   const pathname = usePathname()
+  const { me } = useMe()
 
   if (status === 'loading') {
     return (
@@ -43,6 +45,18 @@ export default function DashboardLayout({
     { href: '/(dashboard)/financeiro', label: 'Financeiro' },
   ]
 
+  const moduleNavItems =
+    me?.segmentationEnabled && me.enabledModules?.length
+      ? [
+          ...(me.enabledModules.includes('agenda')
+            ? [{ href: '/(dashboard)/agenda', label: 'Agenda' }]
+            : []),
+          ...(me.enabledModules.includes('contratos')
+            ? [{ href: '/(dashboard)/contratos', label: 'Contratos' }]
+            : []),
+        ]
+      : []
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
@@ -51,7 +65,7 @@ export default function DashboardLayout({
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-gray-800">Gestor MEI</h1>
               <nav className="ml-8 flex space-x-4">
-                {navItems.map((item) => (
+                {[...navItems, ...moduleNavItems].map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -68,6 +82,12 @@ export default function DashboardLayout({
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-gray-600">{session.user?.email}</span>
+              <Link
+                href="/(dashboard)/segmento"
+                className="text-gray-600 hover:text-gray-900 text-sm"
+              >
+                Segmento
+              </Link>
               <button
                 onClick={() => signOut()}
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
