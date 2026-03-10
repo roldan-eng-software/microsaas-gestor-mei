@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth/options'
 import prisma from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession()
-  
+  const session = await getServerSession(authOptions)
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -16,12 +16,11 @@ export async function GET(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     })
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    // Calcular datas baseadas no período
     const now = new Date()
     let startDate = new Date()
     let endDate = new Date()
@@ -42,69 +41,41 @@ export async function GET(request: NextRequest) {
         break
       case 'month':
         startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
         break
       case 'year':
         startDate = new Date(now.getFullYear(), 0, 1)
-        endDate = new Date(now.getFullYear(), 11, 31)
+        endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59)
         break
     }
 
-    // Buscar lançamentos
     const entries = await prisma.financialEntry.findMany({
       where: {
         userId: user.id,
-        date: {
-          gte: startDate,
-          lte: endDate,
-        },
+        date: { gte: startDate, lte: endDate },
       },
-      include: {
-        client: { select: { name: true } },
-      },
+      include: { client: { select: { name: true } } },
       orderBy: { date: 'desc' },
     })
 
-    // Calcular totais
     const incomeEntries = entries.filter(e => e.type === 'income')
     const expenseEntries = entries.filter(e => e.type === 'expense')
-
-    const totalReceived = incomeEntries.reduce(
-      (sum, entry) => sum + entry.amount.toNumber(), 
-      0
-    )
-    const totalExpenses = expenseEntries.reduce(
-      (sum, entry) => sum + entry.amount.toNumber(), 
-      0
-    )
+    const totalReceived = incomeEntries.reduce((sum, entry) => sum + entry.amount.toNumber(), 0)
+    const totalExpenses = expenseEntries.reduce((sum, entry) => sum + entry.amount.toNumber(), 0)
     const netIncome = totalReceived - totalExpenses
 
-    // Estatísticas
     const amounts = entries.map(e => e.amount.toNumber())
-    const averageEntry = amounts.length > 0 
-      ? amounts.reduce((a, b) => a + b, 0) / amounts.length 
-      : 0
+    const averageEntry = amounts.length > 0 ? amounts.reduce((a, b) => a + b, 0) / amounts.length : 0
     const largestEntry = amounts.length > 0 ? Math.max(...amounts) : 0
 
     return NextResponse.json({
-      period,
-      totalReceived,
-      totalExpenses,
-      netIncome,
+      period, totalReceived, totalExpenses, netIncome,
       entries: entries.map(entry => ({
-        id: entry.id,
-        type: entry.type,
-        description: entry.description,
-        amount: entry.amount.toNumber(),
-        date: entry.date.toISOString(),
+        id: entry.id, type: entry.type, description: entry.description,
+        amount: entry.amount.toNumber(), date: entry.date.toISOString(),
         clientName: entry.client?.name,
-        // paymentMethod: entry.paymentMethod, // Field not in schema
       })),
-      summary: {
-        totalEntries: entries.length,
-        averageEntry,
-        largestEntry,
-      },
+      summary: { totalEntries: entries.length, averageEntry, largestEntry },
     })
   } catch (error) {
     console.error(error)
