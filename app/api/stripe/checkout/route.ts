@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth/options'
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY
-
 const stripe = stripeSecret
-  ? new Stripe(stripeSecret, {
-      apiVersion: '2024-06-20',
-    })
+  ? new Stripe(stripeSecret, { apiVersion: '2024-06-20' })
   : null
 
 export async function POST(request: Request) {
@@ -22,6 +19,7 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}))
   const session = await getServerSession(authOptions)
   const plan = body.plan === 'yearly' ? 'yearly' : 'monthly'
+
   const priceId =
     plan === 'yearly'
       ? process.env.STRIPE_PRICE_ID_YEARLY
