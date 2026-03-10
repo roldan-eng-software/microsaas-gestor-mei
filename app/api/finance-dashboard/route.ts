@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
       }),
     ])
 
-    const totalReceived = received._sum.amount || 0
+    const totalReceived = Number(received._sum.amount || 0)
     const monthlyGoal = goals[0]?.targetAmount || 0
     const monthlyProgress = monthlyGoal > 0 ? Math.min(100, Math.round((totalReceived / monthlyGoal) * 100)) : 0
 
@@ -80,8 +80,8 @@ export async function GET(request: NextRequest) {
         const clientData = await prisma.client.findUnique({ where: { id: client.clientId! } })
         return {
           name: clientData?.name || 'Desconhecido',
-          amount: client._sum.amount || 0,
-          percentage: totalReceived > 0 ? Math.round(((client._sum.amount || 0) / totalReceived) * 100) : 0,
+          amount: Number(client._sum.amount || 0),
+          percentage: totalReceived > 0 ? Math.round(((Number(client._sum.amount) || 0) / totalReceived) * 100) : 0,
         }
       })
     )
