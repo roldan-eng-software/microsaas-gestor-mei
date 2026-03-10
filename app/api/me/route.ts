@@ -24,10 +24,10 @@ export async function GET() {
       email: me.user.email,
       name: me.user.name,
       segment: me.user.segment,
+      hasPaid: me.user.hasPaid,
     },
     enabledModules: me.enabledModules,
     segments,
     moduleCatalog,
   })
 }
-

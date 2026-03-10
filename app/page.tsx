@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 
 const stats = [
@@ -169,6 +170,12 @@ export default function Home() {
               <button className="rounded-full border-2 border-secondary px-6 py-3 text-base font-semibold text-amber-700 transition hover:-translate-y-0.5 hover:bg-amber-50">
                 Ver demo
               </button>
+              <Link
+                href="/auth/signin"
+                className="rounded-full border border-slate-200 px-6 py-3 text-base font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:text-emerald-700"
+              >
+                Entrar no sistema
+              </Link>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-600">
               <span>Sem cartao agora</span>

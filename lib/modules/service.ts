@@ -57,7 +57,7 @@ export async function applySegmentPresetToUser(userId: string, segment: SegmentK
 export async function getMeByEmail(email: string) {
   const user = await prisma.user.findUnique({
     where: { email },
-    select: { id: true, email: true, name: true, segment: true },
+    select: { id: true, email: true, name: true, segment: true, hasPaid: true },
   })
 
   if (!user) return null
@@ -65,4 +65,3 @@ export async function getMeByEmail(email: string) {
   const enabledModules = await getEnabledModulesForUserId(user.id)
   return { user, enabledModules }
 }
-

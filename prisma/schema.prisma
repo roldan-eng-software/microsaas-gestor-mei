@@ -12,6 +12,15 @@ model User {
   email     String   @unique
   password  String?
   name      String?
+  whatsapp  String?
+  city      String?
+  state     String?
+  serviceType String?
+  cnpj      String?
+  workflow  String?
+  hasPaid   Boolean  @default(false)
+  paidUntil DateTime?
+  stripeCustomerId String?
   segment   String   @default("geral")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

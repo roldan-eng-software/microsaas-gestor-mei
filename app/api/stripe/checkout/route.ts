@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY
 
@@ -18,6 +20,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}))
+  const session = await getServerSession(authOptions)
   const plan = body.plan === 'yearly' ? 'yearly' : 'monthly'
   const priceId =
     plan === 'yearly'
@@ -36,18 +39,21 @@ export async function POST(request: Request) {
     request.headers.get('origin') ||
     'http://localhost:3000'
 
-  const session = await stripe.checkout.sessions.create({
+  const checkoutSession = await stripe.checkout.sessions.create({
     mode: 'subscription',
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${baseUrl}/?checkout=success`,
     cancel_url: `${baseUrl}/?checkout=cancel`,
     allow_promotion_codes: true,
-    customer_email: body.email || undefined,
+    customer_email: session?.user?.email || body.email || undefined,
+    client_reference_id: session?.user?.id || undefined,
     metadata: {
-      name: body.name || '',
+      name: body.name || session?.user?.name || '',
       plan,
+      email: session?.user?.email || body.email || '',
+      userId: session?.user?.id || '',
     },
   })
 
-  return NextResponse.json({ url: session.url })
+  return NextResponse.json({ url: checkoutSession.url })
 }
