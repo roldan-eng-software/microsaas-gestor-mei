@@ -8,78 +8,155 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  email          String    @unique
-  password       String?
-  name           String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String?
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relacionamentos
-  clients        Client[]
-  services       Service[]
+  clients          Client[]
+  services         Service[]
   financialEntries FinancialEntry[]
-  
+  recurringPlans   RecurringPlan[]
+  reminders        Reminder[]
+
   @@map("users")
 }
 
 model Client {
-  id          String    @id @default(uuid())
-  name        String
-  email       String?
-  phone       String?
-  address     String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
+  id        String   @id @default(uuid())
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relacionamento com User (MEI)
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
   // Relacionamento com lançamentos financeiros
   financialEntries FinancialEntry[]
-  
+
+  // Relacionamento com planos recorrentes
+  recurringPlans RecurringPlan[]
+
   @@map("clients")
 }
 
 model Service {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String?
   price       Decimal
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
+  tags        String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   // Relacionamento com User (MEI)
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
   // Relacionamento com lançamentos financeiros
   financialEntries FinancialEntry[]
-  
+
+  // Relacionamento com planos recorrentes
+  recurringPlans RecurringPlan[]
+
   @@map("services")
 }
 
 model FinancialEntry {
-  id          String    @id @default(uuid())
-  type        String    // "income" ou "expense"
+  id          String   @id @default(uuid())
+  type        String // "income" ou "expense"
   amount      Decimal
   description String
   date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamento com User (MEI)
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Relacionamento opcional com Cliente
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id])
+
+  // Relacionamento opcional com Serviço
+  serviceId String?
+  service   Service? @relation(fields: [serviceId], references: [id])
+
+  // Relacionamento opcional com Plano Recorrente
+  recurringPlanId String?
+  recurringPlan   RecurringPlan? @relation(fields: [recurringPlanId], references: [id])
+  reminders       Reminder[]
+
+  @@map("financial_entries")
+}
+
+model RecurringPlan {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  amount      Decimal
+  currency    String    @default("BRL")
+  frequency   String // "monthly", "weekly", "biweekly", "quarterly", "yearly"
+  dayOfMonth  Int? // Para mensal: dia do mês (1-31)
+  dayOfWeek   Int? // Para semanal: 0=domingo, 1=segunda, etc.
+  nextDueDate DateTime
+  status      String    @default("active") // "active", "paused", "canceled"
+  startDate   DateTime
+  endDate     DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  
+
   // Relacionamento com User (MEI)
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  
-  // Relacionamento opcional com Cliente
-  clientId    String?
-  client      Client?   @relation(fields: [clientId], references: [id])
-  
-  // Relacionamento opcional com Serviço
-  serviceId   String?
-  service     Service?  @relation(fields: [serviceId], references: [id])
-  
-  @@map("financial_entries")
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Relacionamento com Cliente
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
+
+  // Relacionamento com Serviço (opcional)
+  serviceId String?
+  service   Service? @relation(fields: [serviceId], references: [id])
+
+  // Lançamentos gerados por este plano
+  financialEntries FinancialEntry[]
+
+  // Lembretes associados
+  reminders Reminder[]
+
+  @@map("recurring_plans")
+}
+
+model Reminder {
+  id          String    @id @default(uuid())
+  type        String // "email", "internal"
+  subject     String
+  message     String
+  scheduledAt DateTime
+  sentAt      DateTime?
+  status      String    @default("pending") // "pending", "sent", "failed"
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relacionamento com User (MEI)
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Relacionamento com Plano Recorrente
+  recurringPlanId String?
+  recurringPlan   RecurringPlan? @relation(fields: [recurringPlanId], references: [id])
+
+  // Relacionamento com Lançamento Financeiro
+  financialEntryId String?
+  financialEntry   FinancialEntry? @relation(fields: [financialEntryId], references: [id])
+
+  @@map("reminders")
 }
