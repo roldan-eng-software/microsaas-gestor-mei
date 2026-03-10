@@ -40,6 +40,7 @@ export default function DashboardLayout({
     { href: '/(dashboard)/lancamentos', label: 'Lançamentos' },
     { href: '/(dashboard)/planos-recorrentes', label: 'Planos Recorrentes' },
     { href: '/(dashboard)/recibos', label: 'Recibos' },
+    { href: '/(dashboard)/financeiro', label: 'Financeiro' },
   ]
 
   return (
