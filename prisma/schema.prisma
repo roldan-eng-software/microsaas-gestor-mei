@@ -21,6 +21,7 @@ model User {
   financialEntries FinancialEntry[]
   recurringPlans   RecurringPlan[]
   reminders        Reminder[]
+  goals            Goal[]
 
   @@map("users")
 }
@@ -159,4 +160,26 @@ model Reminder {
   financialEntry   FinancialEntry? @relation(fields: [financialEntryId], references: [id])
 
   @@map("reminders")
+}
+
+model Goal {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  targetAmount Decimal
+  currentAmount Decimal   @default(0)
+  period      String    // "monthly", "yearly"
+  month       Int?
+  year        Int?
+  startDate   DateTime
+  endDate     DateTime?
+  status      String    @default("active") // "active", "completed", "failed"
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relacionamento com User (MEI)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  
+  @@map("goals")
 }
