@@ -1,0 +1,17 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "microsaas-gestor-mei-app",
+    "projectPath": "/home/sandro/Documentos/Roldan_Eng_Software/MIcroSaaS_Gestor_MEI_V2/microsaas-gestor-mei-app",
+    "testIds": [],
+    "additionalInstruction": "Run comprehensive tests on the MEI Organizado app. Test the main pages: homepage, authentication pages (/auth/signin and /auth/signup), and the dashboard area. Verify the UI elements load correctly.",
+    "serverMode": "production",
+    "envs": {
+      "API_KEY": "sk-user-tNaThFHudZ935V2YP-D-O5JJyMrHwf5LAg8U6mDCYJKy_wpTttKs9ShZfj83wUKDTaULHUcLL_Y4KJLxwCuw7oc1R8ZmMhfT2qx6FOglvsqkAYQ0vO1wSl4nayvyuhd3FUE"
+    }
+  },
+  "serverPort": 43661
+}

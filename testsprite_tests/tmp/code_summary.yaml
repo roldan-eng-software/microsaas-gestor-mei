@@ -1,0 +1,17 @@
+project_name: microsaas-gestor-mei-app
+description: MicroSaaS para gestão de MEI (Microempreendedor Individual)
+tech_stack:
+  - nextjs
+  - typescript
+  - tailwindcss
+  - prisma
+  - postgresql
+  - next-auth
+features:
+  - autenticacao
+  - dashboard
+  - cadastro_de_clientes
+  - emissao_de_nota_fiscal
+  - gestao_de_servicos
+  - relatorios
+  - assinatura_paga

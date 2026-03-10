@@ -1,0 +1,1224 @@
+[
+  {
+    "id": "TC001",
+    "title": "Acessar Dashboard e ver indicadores principais",
+    "description": "Verifica que o Dashboard exibe cartões de resumo para receitas, despesas e saldo após o acesso.",
+    "category": "Dashboard",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Receitas\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Despesas\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Saldo\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Acessar Relatórios pelo botão 'Ver relatórios' no Dashboard",
+    "description": "Verifica que o usuário consegue abrir a página de relatórios a partir do Dashboard.",
+    "category": "Dashboard",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ver relatórios\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Ver relatórios\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify page title contains \"Relat\""
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Atalho do Dashboard para adicionar transação leva ao formulário",
+    "description": "Verifica que o atalho de adicionar transação no Dashboard navega para a criação de transação.",
+    "category": "Dashboard",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Adicionar\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Adicionar\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions/new\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Nova transação\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Criar transação a partir do Dashboard e ver reflexo no saldo",
+    "description": "Verifica que, após salvar uma nova transação, o Dashboard reflete a atualização nos indicadores.",
+    "category": "Dashboard",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Adicionar\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions/new\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Venda teste\" into \"Descrição\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"100\" into \"Valor\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Salvar\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/dashboard\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Venda teste\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Validação do formulário: tentar salvar transação sem campos obrigatórios",
+    "description": "Verifica que o sistema impede o salvamento e exibe mensagem de validação quando faltam campos obrigatórios.",
+    "category": "Dashboard",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Adicionar\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions/new\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Salvar\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"obrigat\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions/new\""
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Dashboard exibe seção de gráficos/evolução financeira",
+    "description": "Verifica que o Dashboard apresenta uma área visível de gráfico ou evolução financeira.",
+    "category": "Dashboard",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to \"Evolução\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Evolução\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Chart\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Últimos\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Criar um novo cliente com dados válidos e ver na lista",
+    "description": "Verifica que um cliente pode ser cadastrado com nome, e-mail e CPF/CNPJ válidos e aparece na listagem de clientes.",
+    "category": "Cadastro de Clientes",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /clients"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Clientes\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Novo cliente\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo cliente\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Cliente E2E A\" into \"Nome\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"cliente.e2e.a@example.com\" into \"Email\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"123.456.789-09\" into \"CPF/CNPJ\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Salvar\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cliente E2E A\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Validar CPF/CNPJ inválido no cadastro de cliente",
+    "description": "Verifica que o sistema bloqueia o salvamento e exibe a mensagem de erro ao informar um CPF/CNPJ inválido.",
+    "category": "Cadastro de Clientes",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /clients/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo cliente\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Cliente Doc Inválido\" into \"Nome\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"doc.invalido@example.com\" into \"Email\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"000\" into \"CPF/CNPJ\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Salvar\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Documento inválido\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Impedir salvamento ao tentar cadastrar cliente sem nome",
+    "description": "Verifica que o sistema exige o preenchimento do nome antes de permitir salvar o cliente.",
+    "category": "Cadastro de Clientes",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /clients/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo cliente\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"sem.nome@example.com\" into \"Email\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"123.456.789-09\" into \"CPF/CNPJ\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Salvar\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Nome\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"obrigatório\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Impedir salvamento ao tentar cadastrar cliente sem documento fiscal",
+    "description": "Verifica que o sistema exige o preenchimento do CPF/CNPJ antes de permitir salvar o cliente.",
+    "category": "Cadastro de Clientes",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /clients/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo cliente\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Cliente Sem Documento\" into \"Nome\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"sem.documento@example.com\" into \"Email\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Salvar\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"CPF/CNPJ\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"obrigatório\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Cancelar cadastro de cliente e retornar sem salvar",
+    "description": "Verifica que o usuário pode cancelar o cadastro e voltar para a lista sem criar um novo cliente.",
+    "category": "Cadastro de Clientes",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /clients/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo cliente\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Cliente Cancelado\" into \"Nome\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cancelar\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/clients\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cliente Cancelado\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Emitir nota fiscal de serviço para cliente existente (fluxo feliz)",
+    "description": "Verifica que o usuário consegue emitir uma nota fiscal preenchendo cliente, itens de serviço, data e confirmando a emissão.",
+    "category": "Emissão de Nota Fiscal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /invoices/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Nova nota fiscal\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Cliente existente\" from dropdown \"Cliente\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Consultoria mensal\" into the \"Descrição do serviço\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1500\" into the \"Valor\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2026-03-10\" into the \"Data de emissão\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Emitir nota\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Emitida\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Após emissão, visualizar detalhes da nota e link de download/comprovante",
+    "description": "Verifica que a tela de detalhes da nota exibe status Emitida e um link visível para download/comprovante.",
+    "category": "Emissão de Nota Fiscal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /invoices/new"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Cliente existente\" from dropdown \"Cliente\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Serviço de manutenção\" into the \"Descrição do serviço\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"300\" into the \"Valor\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2026-03-10\" into the \"Data de emissão\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Emitir nota\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Link de download\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Emitida\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Validação ao tentar emitir nota com valor vazio",
+    "description": "Verifica que o sistema bloqueia a emissão e mostra a mensagem de validação quando um campo obrigatório (valor) não é preenchido.",
+    "category": "Emissão de Nota Fiscal",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /invoices/new"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Cliente existente\" from dropdown \"Cliente\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Serviço avulso\" into the \"Descrição do serviço\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Emitir nota\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Campo obrigatório\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Emitir nota\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Validação ao tentar emitir nota sem selecionar cliente",
+    "description": "Verifica que o sistema mostra validação quando o cliente não é selecionado antes de emitir.",
+    "category": "Emissão de Nota Fiscal",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /invoices/new"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Consultoria\" into the \"Descrição do serviço\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"500\" into the \"Valor\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2026-03-10\" into the \"Data de emissão\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Emitir nota\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Campo obrigatório\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Validação ao tentar emitir nota sem descrição do serviço",
+    "description": "Verifica que a descrição do serviço é obrigatória para emitir a nota fiscal.",
+    "category": "Emissão de Nota Fiscal",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /invoices/new"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Cliente existente\" from dropdown \"Cliente\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"250\" into the \"Valor\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2026-03-10\" into the \"Data de emissão\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Emitir nota\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Campo obrigatório\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Prevenir múltiplos cliques: botão Emitir nota desabilita durante processamento",
+    "description": "Verifica que, após clicar em Emitir nota, a UI indica processamento e evita envios duplicados.",
+    "category": "Emissão de Nota Fiscal",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /invoices/new"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Cliente existente\" from dropdown \"Cliente\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Serviço recorrente\" into the \"Descrição do serviço\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"120\" into the \"Valor\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2026-03-10\" into the \"Data de emissão\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Emitir nota\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Emitindo\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Criar um novo serviço com dados válidos e ver na listagem",
+    "description": "Garante que o usuário consegue cadastrar um serviço com nome e preço válidos e que ele aparece na lista de serviços.",
+    "category": "Gestão de Serviços",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Serviços\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Novo serviço\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/services/new\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Consultoria MEI\" into the service name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"150,00\" into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Consultoria MEI\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Validar erro ao salvar serviço com preço negativo",
+    "description": "Garante que o sistema bloqueia o cadastro quando o preço informado é negativo e exibe a mensagem de validação correta.",
+    "category": "Gestão de Serviços",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo serviço\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Serviço Teste Negativo\" into the service name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"-10\" into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Preço inválido\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Impedir salvamento quando nome do serviço estiver vazio",
+    "description": "Garante que o sistema valida o campo de nome e não permite salvar um serviço sem descrição/nome.",
+    "category": "Gestão de Serviços",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo serviço\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"\" into the service name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"50,00\" into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Nome\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Impedir salvamento com preço vazio",
+    "description": "Garante que o sistema valida o campo de preço e exibe erro quando o preço não é informado.",
+    "category": "Gestão de Serviços",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo serviço\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Serviço Sem Preço\" into the service name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"\" into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Preço\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Impedir salvamento com preço em formato inválido (texto)",
+    "description": "Garante que o sistema rejeita preço não numérico e apresenta um estado de validação visível ao usuário.",
+    "category": "Gestão de Serviços",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo serviço\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Serviço Preço Inválido\" into the service name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"abc\" into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Preço inválido\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Salvar serviço com impostos informados (quando disponível)",
+    "description": "Garante que é possível informar impostos no cadastro do serviço e salvar mantendo as informações visíveis após o salvamento.",
+    "category": "Gestão de Serviços",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /services/new"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Novo serviço\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Serviço com Impostos\" into the service name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"100,00\" into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5\" into the taxes field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Serviço com Impostos\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Gerar relatório por período e categoria e visualizar gráficos e totais",
+    "description": "Verifica que o usuário consegue gerar um relatório financeiro selecionando período e categoria e visualizar gráficos e totais na página.",
+    "category": "Relatórios",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /reports"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Relatórios\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid start date in the date range start field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid end date after the start date in the date range end field"
+      },
+      {
+        "type": "action",
+        "description": "Select a category from the category filter dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Gerar relatório\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"charts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Total\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Validar erro ao selecionar data final antes da data inicial",
+    "description": "Verifica que o sistema impede a geração de relatório quando o intervalo de datas é inválido e exibe a mensagem de validação.",
+    "category": "Relatórios",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /reports"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Relatórios\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select a start date in the date range start field"
+      },
+      {
+        "type": "action",
+        "description": "Select an end date before the selected start date in the date range end field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Gerar relatório\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Intervalo inválido\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"charts\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Gerar relatório filtrando por cliente e ver resultados filtrados",
+    "description": "Verifica que o usuário consegue filtrar o relatório por cliente e visualizar resultados e totais correspondentes.",
+    "category": "Relatórios",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /reports"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Relatórios\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select a cliente from the cliente filter dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Gerar relatório\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Total\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"results\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text of the selected cliente is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Gerar relatório sem filtros adicionais (somente período)",
+    "description": "Verifica que o usuário consegue gerar um relatório apenas com período selecionado, sem categoria ou cliente, e visualizar totais.",
+    "category": "Relatórios",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /reports"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Relatórios\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid start date in the date range start field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid end date after the start date in the date range end field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Gerar relatório\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"charts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Total\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC028",
+    "title": "Trocar filtro de categoria e regenerar relatório atualizando os resultados",
+    "description": "Verifica que ao alterar a categoria e gerar novamente, os resultados exibidos na página são atualizados.",
+    "category": "Relatórios",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /reports"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid start date in the date range start field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid end date after the start date in the date range end field"
+      },
+      {
+        "type": "action",
+        "description": "Select a category from the category filter dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Gerar relatório\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"results\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select a different category from the category filter dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Gerar relatório\""
+      }
+    ]
+  },
+  {
+    "id": "TC029",
+    "title": "Gerar relatório com filtro de cliente e categoria combinados",
+    "description": "Verifica que o usuário consegue aplicar simultaneamente filtros de cliente e categoria e obter resultados coerentes na tela.",
+    "category": "Relatórios",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /reports"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Relatórios\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select a cliente from the cliente filter dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Select a category from the category filter dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Gerar relatório\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text of the selected cliente is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Total\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC030",
+    "title": "Bloquear exportação antes de gerar relatório",
+    "description": "Verifica que a opção de exportação não fica disponível (ou orienta o usuário) antes de existir um relatório gerado na tela.",
+    "category": "Relatórios",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /reports"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Relatórios\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Exportar CSV\" is not visible"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Gerar relatório\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Selecione um período\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Exportar CSV\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC031",
+    "title": "Cancelar assinatura pela página de faturamento e ver status Cancelado",
+    "description": "Verifica que o usuário consegue cancelar a assinatura na página de faturamento e visualizar o status atualizado para Cancelado.",
+    "category": "Assinatura Paga",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /account/billing"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/account/billing\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ativo\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cancel subscription\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text asking to confirm cancellation is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Confirm cancellation\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cancelado\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Atualizado\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC032",
+    "title": "Trocar de plano selecionado antes de assinar e validar que a seleção foi aplicada",
+    "description": "Verifica que o usuário pode alternar entre planos na página /subscribe e que o plano selecionado fica visualmente confirmado antes de prosseguir.",
+    "category": "Assinatura Paga",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /subscribe"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/subscribe\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a first plan option to select it"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating the first plan is selected is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on a different plan option to select it"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating the second plan is selected is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Assinar com Stripe\" button is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC033",
+    "title": "Tentar assinar sem selecionar plano e validar bloqueio/validação na tela",
+    "description": "Verifica que o sistema impede prosseguir para pagamento quando nenhum plano foi selecionado e mostra uma validação visível.",
+    "category": "Assinatura Paga",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /subscribe"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/subscribe\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Assinar com Stripe\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating a plan must be selected is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/subscribe\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element showing the plan list is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC034",
+    "title": "Reabrir /account/billing após cancelamento e confirmar persistência do status Cancelado",
+    "description": "Verifica que o status Cancelado permanece visível ao recarregar a página de faturamento após o cancelamento.",
+    "category": "Assinatura Paga",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /account/billing"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/account/billing\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cancel subscription\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text asking to confirm cancellation is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Confirm cancellation\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cancelado\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /account/billing"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cancelado\" is visible"
+      }
+    ]
+  }
+]

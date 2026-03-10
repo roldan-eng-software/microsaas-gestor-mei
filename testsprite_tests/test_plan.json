@@ -1,0 +1,38 @@
+{
+  "test_plan_id": "manual_plan_001",
+  "project_name": "microsaas-gestor-mei-app",
+  "tests": [
+    {
+      "id": "test_001",
+      "description": "Acessar a página inicial e verificar se o título está visível",
+      "steps": [
+        "Abrir a página inicial",
+        "Verificar se o título 'MicroSaaS Gestor MEI' está visível"
+      ],
+      "expected_result": "O título da página é exibido corretamente"
+    },
+    {
+      "id": "test_002",
+      "description": "Testar fluxo de autenticação",
+      "steps": [
+        "Clicar no botão de login",
+        "Inserir credenciais válidas",
+        "Clicar em entrar",
+        "Verificar se redireciona para o dashboard"
+      ],
+      "expected_result": "Usuário é autenticado e redirecionado para o dashboard"
+    },
+    {
+      "id": "test_003",
+      "description": "Testar cadastro de cliente",
+      "steps": [
+        "Acessar a página de clientes",
+        "Clicar em 'Novo Cliente'",
+        "Preencher o formulário com dados válidos",
+        "Salvar o cliente",
+        "Verificar se o cliente aparece na lista"
+      ],
+      "expected_result": "Cliente é cadastrado e exibido na lista"
+    }
+  ]
+}

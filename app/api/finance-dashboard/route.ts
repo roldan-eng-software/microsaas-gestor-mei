@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     ])
 
     const totalReceived = Number(received._sum.amount || 0)
-    const monthlyGoal = goals[0]?.targetAmount || 0
+    const monthlyGoal = Number(goals[0]?.targetAmount || 0)
     const monthlyProgress = monthlyGoal > 0 ? Math.min(100, Math.round((totalReceived / monthlyGoal) * 100)) : 0
 
     const topClientsWithDetails = await Promise.all(
@@ -99,9 +99,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       totalReceived,
-      totalToReceive: toReceive._sum.amount || 0,
-      totalExpenses: expenses._sum.amount || 0,
-      netIncome: totalReceived - (expenses._sum.amount || 0),
+      totalToReceive: Number(toReceive._sum.amount || 0),
+      totalExpenses: Number(expenses._sum.amount || 0),
+      netIncome: totalReceived - Number(expenses._sum.amount || 0),
       topClients: topClientsWithDetails,
       topServices: topServicesWithDetails,
       monthlyGoal,
