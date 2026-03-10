@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth/options'
 import { featureFlags } from '@/lib/featureFlags'
 import { moduleCatalog } from '@/lib/modules/catalog'
 import { getMeByEmail } from '@/lib/modules/service'
 import { segments } from '@/lib/segments'
 
 export async function GET() {
-  const session = await getServerSession()
+  const session = await getServerSession(authOptions)
 
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

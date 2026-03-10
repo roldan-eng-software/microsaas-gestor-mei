@@ -1,11 +1,10 @@
-import NextAuth, { AuthOptions } from 'next-auth'
+import prisma from '@/lib/prisma'
 import { verifyPassword } from '@/lib/auth/password'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import GoogleProvider from 'next-auth/providers/google'
-import prisma from '@/lib/prisma'
+import { AuthOptions } from 'next-auth'
 
 export const authOptions: AuthOptions = {
-  // Adapter removido - usando JWT strategy
+  // Adapter removido - usando JWT strategy sem persistência de sessão em DB
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -33,10 +32,6 @@ export const authOptions: AuthOptions = {
         }
       },
     }),
-    // GoogleProvider({
-    //   clientId: process.env.GOOGLE_CLIENT_ID!,
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    // }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: {
@@ -62,7 +57,3 @@ export const authOptions: AuthOptions = {
     },
   },
 }
-
-const handler = NextAuth(authOptions)
-
-export { handler as GET, handler as POST }
