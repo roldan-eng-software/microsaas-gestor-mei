@@ -2,11 +2,46 @@
 
 :root {
   color-scheme: light;
+  --background: #f8fafc;
+  --foreground: #1e293b;
+  --primary: #10B981;
+  --secondary: #F59E0B;
+  --accent: #EF4444;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --text-muted: #64748b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background: #0F172A;
+    --foreground: #F1F5F9;
+    --primary: #34D399;
+    --secondary: #FBBF24;
+    --accent: #F87171;
+    --card-bg: #1E293B;
+    --card-border: #334155;
+    --text-muted: #94A3B8;
+  }
+}
+
+/* Manual theme override classes */
+html.light {
+  color-scheme: light;
+  --background: #f8fafc;
+  --foreground: #1e293b;
+}
+
+html.dark {
+  color-scheme: dark;
+  --background: #0F172A;
+  --foreground: #F1F5F9;
 }
 
 body {
-  background: #f8fafc;
-  color: #1e293b;
+  background-color: var(--background);
+  color: var(--foreground);
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
@@ -23,6 +58,15 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }
 
 .reveal {

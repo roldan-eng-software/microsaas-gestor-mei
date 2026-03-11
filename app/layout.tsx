@@ -41,7 +41,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br">
-      <body className={`${bodyFont.variable} ${displayFont.variable} font-sans antialiased`}>
+      <body className={`${bodyFont.variable} ${displayFont.variable} font-sans antialiased bg-surface text-ink dark:bg-slate-900 dark:text-slate-100`}>
         <SessionProvider>
           {children}
         </SessionProvider>
