@@ -101,7 +101,13 @@ function Navbar() {
         {/* Esquerda: Favicon e Logotipo em PNG */}
         <div className="flex items-center gap-3">
           <div className="relative w-8 h-8">
-            <Image src="/favicon.ico" alt="Ícone" fill className="object-contain" />
+            <Image 
+              src="/favicon.ico" 
+              alt="Ícone do Projeto" 
+              fill 
+              className="object-contain"
+              priority
+            />
           </div>
           <div className="relative w-28 h-8 hidden sm:block">
             <Image src="/logotipo.png" alt="Logotipo do Projeto" fill className="object-contain" />
